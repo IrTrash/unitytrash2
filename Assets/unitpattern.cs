@@ -190,11 +190,10 @@ public class unitpattern : MonoBehaviour
 
 
 
-    public List<Unit> myunits = new List<Unit>(), defenceunitlist = new List<Unit>();
-    public Dictionary<Unit, Unit> attackunitlist = new Dictionary<Unit, Unit>();//myunit,enemy
+    public List<Unit> myunits = new List<Unit>(), defenceunitlist = new List<Unit>(), attackunitlist = new List<Unit>();    
     public int defenceunitcount = 4 , maxunitcount = 10; // 주둔 유닛 수 , 최대 유닛 수
     public int defendrange = 2;//적이 이 범위안에오면 자신 방어 행동
-    public List<Unit> targetlist = new List<Unit>(); //여러 타겟 
+    public List<Unit> targetlist = new List<Unit>(), deftargetlist = new List<Unit>(); //여러 타겟 
     void buildingproc() //생산건물 전용 패턴.
     {
         //어차피 자동적으로 action을 생성 후 추가하기 위한 거니까 행동불가거나 하고있는게 있으면 안 함.
@@ -210,14 +209,12 @@ public class unitpattern : MonoBehaviour
         }
 
         //타겟리스트
-        targetlist = findenemies(defendrange);
-        if(targetlist.Count < 1)
+        deftargetlist = findenemies(defendrange);        
+        targetlist = findenemies(searchrange);
+        foreach(Unit deftu in deftargetlist)
         {
-            targetlist = findenemies(searchrange);
+            targetlist.Remove(deftu);
         }
-
-
-
 
         //유닛 생산
         Unitbuilder ub = GetComponent<Unitbuilder>();
@@ -265,7 +262,7 @@ public class unitpattern : MonoBehaviour
             }
             else
             {
-                attackunitlist.Add(myunit , null);
+                attackunitlist.Add(myunit);
                 removelist.Add(myunit);
             }
                 
@@ -279,7 +276,45 @@ public class unitpattern : MonoBehaviour
 
 
         //attackunit, defencenunit 처리
-        foreach (Unit atku in attackunitlist.Keys)
+        //defunit부터
+        bool random;
+        int targetindex = 0;
+        foreach (Unit defu in defenceunitlist)
+        {
+            if(defu == null)
+            {
+                continue;
+            }            
+
+            
+            unitpattern defup = defu.GetComponent<unitpattern>();
+            if (defup == null)
+            {
+                continue;
+            }
+            else if (defup.cancommand())
+            { 
+                random = targetindex < deftargetlist.Count;
+                Unit tbuf;
+                if (!random)
+                {
+                    tbuf = deftargetlist[targetindex++];
+                }
+                else
+                {
+                    tbuf = deftargetlist[UnityEngine.Random.Range(0, deftargetlist.Count)];
+                }
+                
+                defup.pactionrequest(new paction(paction.typelist.attackdown, new int[] { system.tilex(tbuf.x), system.tiley(tbuf.y) }, null, null));
+            }
+
+            
+
+        }
+
+
+        random = false;
+        foreach (Unit atku in attackunitlist)
         {
             //기용 가능한 상황인지 체크
             //조건 : 행동가능,패턴존재,타겟이없음, 나중에 더 추가할수도있음
@@ -291,15 +326,10 @@ public class unitpattern : MonoBehaviour
             unitpattern atkuptrn = atku.GetComponent<unitpattern>();
             if (atkuptrn != null)
             {
-                if(atkuptrn.target != attackunitlist[atku])
-                {
-                    attackunitlist[atku] = target;
-                }
 
-                if(atkuptrn.cancommand() && attackunitlist[atku] == null)
-                {
-                    //보통은 공격 유닛을 보내지 않은 타겟 우선적으로 할려했지만 일단은 랜덤으로 박아넣기로함. 변수설계가 복잡해져서
-                    
+
+                if(atkuptrn.cancommand())
+                {                                        
                     atkuptrn.pactionrequest(new unitpattern.paction(paction.typelist.attackdown, new int[] { }))
                 }                                
 
