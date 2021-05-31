@@ -208,7 +208,7 @@ public class system : MonoBehaviour
     
 
     public const int unitplacelimit = 2;
-    public const float unitplacepushdistance = 0.3f;
+    public const float unitplacepushdistance = 0.1f;
     public void unitplaceproc() //겹치기 처리. 일정이상 겹치면 다른곳으로 보내는 식으로 해야할듯..근데 생각해보면 골치아픈 점이 많음 좀더 생각을 해야..
     {
         //
