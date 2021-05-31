@@ -97,22 +97,25 @@ public class unitpattern : MonoBehaviour
             return;
         }
 
-        if(!cancommand())
+        if (target == null)
+        {
+            target = findenemy(searchrange);
+            if (target == null) //찾아도 없으면
+            {
+
+            }
+        }
+
+        if (!cancommand())
         {
             return;
         }
 
         
-        if(target == null)
+        
+        if(target != null)
         {
-            target = findenemy(searchrange);
-            if(target == null) //찾아도 없으면
-            {
-                
-            }
-        }
-        else
-        {
+            Debug.Log(gameObject.name + " found a target");
             //타겟 유효성
             if (!system.isin(target.x,target.y,u.x - searchrange, u.y - searchrange, u.x + searchrange, u.y + searchrange) || u.team == target.team)
             {
@@ -120,7 +123,7 @@ public class unitpattern : MonoBehaviour
             }   
             else
             {
-                if(wpindex >= 0) //이미 선택한 무기가 있을 경우
+                if(wpindex >= 0) //이미 선택한 무기가 있을 경우 
                 {
                     weapon wp = u.findweapon(wpindex);
                     if(Mathf.Abs(u.x - target.x) + Mathf.Abs(u.y - target.y)  <= wp.range)
@@ -326,11 +329,20 @@ public class unitpattern : MonoBehaviour
             unitpattern atkuptrn = atku.GetComponent<unitpattern>();
             if (atkuptrn != null)
             {
+                random = targetindex < targetlist.Count;
+                Unit tbuf;
+                if (!random)
+                {
+                    tbuf = targetlist[targetindex++];
+                }
+                else
+                {
+                    tbuf = targetlist[UnityEngine.Random.Range(0, targetlist.Count)];
+                }
 
-
-                if(atkuptrn.cancommand())
-                {                                        
-                    atkuptrn.pactionrequest(new unitpattern.paction(paction.typelist.attackdown, new int[] { }))
+                if (atkuptrn.cancommand())
+                {
+                    atkuptrn.pactionrequest(new unitpattern.paction(paction.typelist.attackdown, new int[] { system.tilex(tbuf.x), system.tiley(tbuf.y) }, null, null));
                 }                                
 
             }
@@ -448,7 +460,7 @@ public class unitpattern : MonoBehaviour
             return false;
         }
 
-        return currentpaction != null && u.canaction && u.actionlist.Count <= 0 && u.currentaction == null && u.pushedaction == null;
+        return currentpaction == null && u.canaction && u.actionlist.Count <= 0 && u.currentaction == null && u.pushedaction == null;
     }
 
 
