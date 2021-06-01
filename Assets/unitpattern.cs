@@ -13,6 +13,7 @@ public class unitpattern : MonoBehaviour
         {
             u = gameObject.GetComponent<Unit>();          
         }
+
     }
 
     private void FixedUpdate()
@@ -197,172 +198,98 @@ public class unitpattern : MonoBehaviour
     public int defenceunitcount = 4 , maxunitcount = 10; // 주둔 유닛 수 , 최대 유닛 수
     public int defendrange = 2;//적이 이 범위안에오면 자신 방어 행동
     public List<Unit> targetlist = new List<Unit>(), deftargetlist = new List<Unit>(); //여러 타겟 
+    public Unitbuilder ub;
     void buildingproc() //생산건물 전용 패턴.
     {
-        //어차피 자동적으로 action을 생성 후 추가하기 위한 거니까 행동불가거나 하고있는게 있으면 안 함.
-        if (!u.canaction || u.currentaction != null || u.actionlist.Count > 0 || u.pushedaction != null)
+        //이 함수가 돌아가야할 상황인지
+        
+
+
+        if (ub == null)
         {
-            return;
+            ub = GetComponent<Unitbuilder>();
         }
-
-        system sys = system.findsystem();
-        if (sys == null)
+        else
         {
-            return;
-        }
-
-        //타겟리스트
-        deftargetlist = findenemies(defendrange);        
-        targetlist = findenemies(searchrange);
-        foreach(Unit deftu in deftargetlist)
-        {
-            targetlist.Remove(deftu);
-        }
-
-        //유닛 생산
-        Unitbuilder ub = GetComponent<Unitbuilder>();
-
-        if (ub != null)
-        {
-            if (ub.current == null && ub.list.Count <= 0) //생산중인 유닛이 없을때
+            if(ub.able())
             {
-                //생산할 유닛 선택
-                Unitbuildinfo[] ubinfolist = GetComponents<Unitbuildinfo>();
-                if (ubinfolist != null)
+                //아무거나 리퀘스트
+                Unitbuildinfo[] options = ub.GetComponents<Unitbuildinfo>();
+                if(options != null)
                 {
-                    ub.request(ubinfolist.Length);
+                    ub.request(UnityEngine.Random.Range(0, options.Length));
                 }
             }
 
 
-
-            //생산한 유닛들을 나중에 명령 내릴 수 있도록 리스트에 저장
-        }
-
-        List<Unit> removelist = new List<Unit>();
-        //myunit처리
-        foreach(Unit myunit in myunits)
-        {
-            //유효성
-            if(myunit == null)
+            foreach(Unit bunit in ub.buildedunits)
             {
-                removelist.Add(myunit);
-                continue;
-            }
-            else if(u.team != myunit.team)
-            {
-                removelist.Add(myunit);
-                continue;
-            }
-
-
-            
-            //일단 주둔시키는 유닛 부터 우선으로 해야
-            if (defenceunitlist.Count < defenceunitcount)
-            {
-                defenceunitlist.Add(myunit);
-                removelist.Add(myunit);
-            }
-            else
-            {
-                attackunitlist.Add(myunit);
-                removelist.Add(myunit);
-            }
-                
-        }
-
-        //유효하지 않거나 다른 쪽으로 할당된 myunits 제거
-        foreach(Unit removeunit in removelist)
-        {
-            myunits.Remove(removeunit);
-        }
-
-
-        //attackunit, defencenunit 처리
-        //defunit부터
-        bool random;
-        int targetindex = 0;
-        foreach (Unit defu in defenceunitlist)
-        {
-            if(defu == null)
-            {
-                continue;
-            }            
-
-            
-            unitpattern defup = defu.GetComponent<unitpattern>();
-            if (defup == null)
-            {
-                continue;
-            }
-            else if (defup.cancommand())
-            { 
-                random = targetindex < deftargetlist.Count;
-                Unit tbuf;
-                if (!random)
+                if(bunit == null)
                 {
-                    tbuf = deftargetlist[targetindex++];
-                }
-                else
-                {
-                    tbuf = deftargetlist[UnityEngine.Random.Range(0, deftargetlist.Count)];
-                }
-                
-                defup.pactionrequest(new paction(paction.typelist.attackdown, new int[] { system.tilex(tbuf.x), system.tiley(tbuf.y) }, null, null));
-            }
-
-            
-
-        }
-
-
-        random = false;
-        foreach (Unit atku in attackunitlist)
-        {
-            //기용 가능한 상황인지 체크
-            //조건 : 행동가능,패턴존재,타겟이없음, 나중에 더 추가할수도있음
-            if(atku == null)
-            {
-                continue;
-            }            
-
-            unitpattern atkuptrn = atku.GetComponent<unitpattern>();
-            if (atkuptrn != null)
-            {
-                random = targetindex < targetlist.Count;
-                Unit tbuf;
-                if (!random)
-                {
-                    tbuf = targetlist[targetindex++];
-                }
-                else
-                {
-                    tbuf = targetlist[UnityEngine.Random.Range(0, targetlist.Count)];
+                    continue;
                 }
 
-                if (atkuptrn.cancommand())
+                if(defenceunitlist.Count < defenceunitcount)
                 {
-                    atkuptrn.pactionrequest(new unitpattern.paction(paction.typelist.attackdown, new int[] { system.tilex(tbuf.x), system.tiley(tbuf.y) }, null, null));
-                }                                
+                    if(!defenceunitlist.Contains(bunit))
+                    {
+                        defenceunitlist.Add(bunit);
+                    }
+                }
+                else // attackunitlist
+                {
+                    if(!attackunitlist.Contains(bunit))
+                    {
+                        attackunitlist.Add(bunit);
+                    }
+
+                }
+            }
+
+            //타겟 검출
+            targetlist = findenemies(searchrange);
+            deftargetlist = findenemies(defendrange);
+
+            foreach(Unit tu in deftargetlist)
+            {
+                targetlist.Remove(tu);
+            }
+
+
+
+
+            //내 유닛 처리
+            List<Unit> removelist = new List<Unit>();
+            //defunits
+            foreach(Unit dunit in defenceunitlist)
+            {
+                if (dunit == null) //유효성
+                {
+                    removelist.Add(dunit);
+                }
+            }
+            foreach(Unit runit in removelist)
+            {
+                defenceunitlist.Remove(runit);
 
             }
 
+
+            foreach (Unit aunit in attackunitlist)
+            {
+                if (aunit == null) //유효성
+                {
+                    removelist.Add(aunit);
+                }
+            }
+            foreach (Unit runit in removelist)
+            {
+                defenceunitlist.Remove(runit);
+
+            }
         }
 
 
-        foreach(Unit defu in defenceunitlist)
-        {
-
-        }
-
-
-
-
-        //대응 시작
-        if (target != null)
-        {
-            
-        }
     }
 
     public bool pactionrequest(paction dest) //이미있으면안함

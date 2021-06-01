@@ -36,6 +36,8 @@ public class Unit : MonoBehaviour
 
     public float colsize = 0.5f;
 
+    public Unitbuilder ub;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -86,6 +88,11 @@ public class Unit : MonoBehaviour
             {
                 sys.unitlist.Remove(this);
             }
+        }
+
+        if(ub != null)
+        {
+            ub.buildedunits.Remove(this);
         }
     }
 

@@ -17,6 +17,11 @@ public class Unitbuilder : MonoBehaviour
 
     public unitpattern up;
 
+    public List<Unit> buildedunits = new List<Unit>();
+
+    public int unitcountmax = 10;
+
+
     private void Start()
     {
         if(up == null)
@@ -66,6 +71,8 @@ public class Unitbuilder : MonoBehaviour
                         Unit bufunit = buf.GetComponent<Unit>();
                         if(bufunit != null)
                         {
+                            buildedunits.Add(bufunit);
+
                             bufunit.addaction(unitaction.typelist.movedest, new int[] { rellypointx, rellypointy }, null) ; //이시점에서 제대로 수행될 수 있나?
                         }
                     }
@@ -91,13 +98,13 @@ public class Unitbuilder : MonoBehaviour
 
     public bool request(int index)
     {
-        if(index < 0)
+        if(index < 0 || !able())
         {
             return false;
         }
 
         List<Unitbuildinfo> bilist = new List<Unitbuildinfo>(gameObject.GetComponents<Unitbuildinfo>());
-        if(bilist.Count <= index || list.Count >= buildlistmax) //인덱스가 리스트 범위 밖이거나 큐가 꽉 찼을 경우(그냥 제한해둔거 )
+        if(bilist.Count <= index) //인덱스가 리스트 범위 밖이거나 큐가 꽉 찼을 경우(그냥 제한해둔거 )
         {
             return false;
         }
@@ -112,5 +119,11 @@ public class Unitbuilder : MonoBehaviour
         }
 
         return true;
+    }
+
+
+    public bool able()
+    {
+        return list.Count < buildlistmax && ((current != null && unitcountmax > buildedunits.Count + 1) || (current == null && unitcountmax > buildedunits.Count));  //
     }
 }
