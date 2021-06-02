@@ -256,10 +256,10 @@ public class unitpattern : MonoBehaviour
             }
 
 
-
-
             //내 유닛 처리
             List<Unit> removelist = new List<Unit>();
+
+            int tindex = 0;
             //defunits
             foreach(Unit dunit in defenceunitlist)
             {
@@ -267,25 +267,64 @@ public class unitpattern : MonoBehaviour
                 {
                     removelist.Add(dunit);
                 }
+
+                unitpattern dunitptrn = dunit.GetComponent<unitpattern>();
+                if(dunitptrn != null)
+                {
+                    if(dunitptrn.cancommand())
+                    {
+                        Unit t;
+                        if(tindex >= deftargetlist.Count)
+                        {
+                            t = deftargetlist[UnityEngine.Random.Range(0, deftargetlist.Count)];
+                        }
+                        else
+                        {
+                            t = deftargetlist[tindex++];
+                        }
+
+                        dunitptrn.pactionrequest(new paction(paction.typelist.attackdown, new int[] { system.tilex(t.x), system.tiley(t.y) }, null, null));
+                    }
+                }
             }
             foreach(Unit runit in removelist)
             {
                 defenceunitlist.Remove(runit);
-
             }
 
+            removelist.Clear();
 
+            tindex = 0;
             foreach (Unit aunit in attackunitlist)
             {
                 if (aunit == null) //유효성
                 {
                     removelist.Add(aunit);
                 }
+
+                unitpattern aunitptrn = aunit.GetComponent<unitpattern>();
+                if (aunitptrn != null)
+                {
+                    if (aunitptrn.cancommand())
+                    {
+                        Unit t;
+                        if(tindex >= targetlist.Count)
+                        {
+                            t = targetlist[UnityEngine.Random.Range(0, targetlist.Count)];
+                        }
+                        else
+                        {
+                            t = targetlist[tindex++];
+                        }
+
+                        aunitptrn.pactionrequest(new paction(paction.typelist.attackdown, new int[] { system.tilex(t.x), system.tiley(t.y) }, null, null));
+                    }
+
+                }
             }
             foreach (Unit runit in removelist)
             {
-                defenceunitlist.Remove(runit);
-
+                attackunitlist.Remove(runit);
             }
         }
 
