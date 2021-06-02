@@ -143,10 +143,6 @@ public class system : MonoBehaviour
             r.Add(direc);
         }
 
-        foreach(Unit._direction d in r)
-        {
-            Debug.Log(d);
-        }
 
         return r.ToArray();
     }
@@ -215,6 +211,10 @@ public class system : MonoBehaviour
         foreach (Unit u in unitlist)
         {
             if (u == null)
+            {
+                continue;
+            }
+            else if(u.type == Unit._type.building) //건물은 강제조정 안되도록
             {
                 continue;
             }

@@ -64,19 +64,21 @@ public class Unitbuilder : MonoBehaviour
                 {
                     GameObject buf = current.create(u.x, u.y, u.team);
                     //추가 처리(렐리 포인트 등)
-
-                    if(rellypoint)
+                    Unit bufunit = buf.GetComponent<Unit>();
+                    if(bufunit != null)
                     {
-                        //rellyx,rellyy로 buf에 이동 명령 추가
-                        Unit bufunit = buf.GetComponent<Unit>();
-                        if(bufunit != null)
+                        buildedunits.Add(bufunit);
+                        bufunit.ub = this;
+                        if (rellypoint)
                         {
-                            buildedunits.Add(bufunit);
-
-                            bufunit.addaction(unitaction.typelist.movedest, new int[] { rellypointx, rellypointy }, null) ; //이시점에서 제대로 수행될 수 있나?
+                            //rellyx,rellyy로 buf에 이동 명령 추가
+                            if (bufunit != null)
+                            {
+                                bufunit.addaction(unitaction.typelist.movedest, new int[] { rellypointx, rellypointy }, null); //이시점에서 제대로 수행될 수 있나?
+                            }
                         }
                     }
-
+                    
 
                     //up가 존재하면 myunit에 추가
                     if(up != null)
@@ -112,6 +114,7 @@ public class Unitbuilder : MonoBehaviour
         if(list.Count == 0 && current == null)
         {
             current = bilist[index];
+            currenttime = current.reqtime;
         }
         else
         {

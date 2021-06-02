@@ -184,7 +184,7 @@ public class unitaction : MonoBehaviour
                 }
                 break;
 
-            case typelist.approach: //기본적으로는 movedest와 동일하지만 일정 거리까지만 간다는게 차이
+            case typelist.approach: //기본적으로는 movedest와 동일하지만 일정 거리만 간다는게 차이
                 {
                     if (!started)
                     {
@@ -193,22 +193,15 @@ public class unitaction : MonoBehaviour
                             completed = true;
                             break;
                         }
-                        else if (i.Length < 2) 
+                        else if (i.Length < 3) 
                         {
                             completed = true;
                             break;
                         }
 
-                        if(f == null)
-                        {
-                            completed = true;
-                            break;
-                        }
                         
-
                         system sys = system.findsystem();
-                        Unit._direction[] d = sys.findway(u.ix, u.iy, i[0], i[1]);
-                        f = new float[] { i[0], i[1], f[0] };
+                        Unit._direction[] d = sys.findway(u.ix, u.iy, i[0], i[1]);                        
                         if (d == null)
                         {
                             completed = true;
@@ -222,6 +215,10 @@ public class unitaction : MonoBehaviour
                             };
                             foreach (Unit._direction dn in d)
                             {
+                                if(ilist.Count > i[2])
+                                {
+                                    break;
+                                }
                                 ilist.Add((int)dn);
                             }
                             i = ilist.ToArray();
@@ -229,13 +226,6 @@ public class unitaction : MonoBehaviour
                     }
                     else
                     {
-                        if( Mathf.Sqrt((u.x - f[0]) * (u.x - f[0]) + (u.y - f[1]) * (u.y - f[1])) <= f[2])
-                        {
-                            Debug.Log(f[2]);
-                            completed = true;
-                            break;
-                        }
-
                         if (i[0] >= i.Length) //방향의 리스트만 그대로 수행하기 때문에 위치가 변경되면 더이상 의미가 없게 되므로 멈춰주는것이 필요할듯
                         {
                             completed = true;
@@ -243,12 +233,12 @@ public class unitaction : MonoBehaviour
                         }
 
                         //pushaction                        
-                        u.pushaction(typelist.movedirec, new int[] { i[i[0]], 100 }, null, null);
+                        u.pushaction(typelist.movedirec, new int[] { i[i[0]++], 100 }, null, null);
 
-                        i[0]++;
                     }
                 }
                 break;
+                
 
 
             case typelist.useweapon:

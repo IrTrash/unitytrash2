@@ -53,7 +53,7 @@ public class unitpattern : MonoBehaviour
             attackdown = 1
         }
 
-        public bool started = false;
+        public bool started = false, defered = false;
 
         public typelist type;
         public int[] i;
@@ -86,6 +86,7 @@ public class unitpattern : MonoBehaviour
     public Unit target;
     public float searchrange = 1;
     public int wpindex = -1; //이거 너무ㅡ 오래끌면 이 무기만 쓸려하지않을까? 고민
+    public bool defered = false;
     void unitproc() //20210510기준 이동 자체가 끝난 시점에서 처리를 하기 때문에 서로 가까워지려고 좌우로 움직이면 이동이 끝난 시점에 좌우가 뒤바뀌어서 다시 반복하게 됨. 수정이 필요할듯 <= 0512 : 대충랜덤
     {
         //어차피 자동적으로 action을 생성 후 추가하기 위한 거니까 행동불가거나 하고있는게 있으면 안 함.
@@ -93,9 +94,20 @@ public class unitpattern : MonoBehaviour
         {
             if(pactionproc(currentpaction))
             {
-                currentpaction = null;
+                if(currentpaction.defered)
+                {
+                    
+                }
+                else
+                {
+                    currentpaction = null;
+                }
+                    
+            }                        
+            else
+            {
+                return;
             }
-            return;
         }
 
         if (target == null)
@@ -107,8 +119,8 @@ public class unitpattern : MonoBehaviour
             }
         }
 
-        if (!cancommand())
-        {
+        if (!u.canaction || u.actionlist.Count > 0 || u.currentaction != null || u.pushedaction != null)
+        {            
             return;
         }
 
@@ -116,7 +128,6 @@ public class unitpattern : MonoBehaviour
         
         if(target != null)
         {
-            Debug.Log(gameObject.name + " found a target");
             //타겟 유효성
             if (!system.isin(target.x,target.y,u.x - searchrange, u.y - searchrange, u.x + searchrange, u.y + searchrange) || u.team == target.team)
             {
@@ -135,7 +146,8 @@ public class unitpattern : MonoBehaviour
                     }
                     else //접근 
                     {
-                        u.addaction(unitaction.typelist.approach, new int[] { target.ix, target.iy }, new float[] { wp.range });
+                        Debug.Log("asdf");
+                        u.addaction(unitaction.typelist.approach, new int[] { target.ix, target.iy ,1 }, null );
                     }                                        
                 }
                 else
@@ -194,9 +206,9 @@ public class unitpattern : MonoBehaviour
 
 
 
-    public List<Unit> myunits = new List<Unit>(), defenceunitlist = new List<Unit>(), attackunitlist = new List<Unit>();    
-    public int defenceunitcount = 4 , maxunitcount = 10; // 주둔 유닛 수 , 최대 유닛 수
-    public int defendrange = 2;//적이 이 범위안에오면 자신 방어 행동
+    public List<Unit> myunits = new List<Unit>(), defenceunitlist = new List<Unit>(), attackunitlist = new List<Unit>();
+    public int defenceunitcount = 4; //방어에 쓸 유닛 수
+    public int defendrange = 2;//적이 이 범위안에오면 방어 유닛을 그 적으로 보냄
     public List<Unit> targetlist = new List<Unit>(), deftargetlist = new List<Unit>(); //여러 타겟 
     public Unitbuilder ub;
     void buildingproc() //생산건물 전용 패턴.
@@ -267,14 +279,42 @@ public class unitpattern : MonoBehaviour
                 {
                     removelist.Add(dunit);
                 }
+            }
+            foreach(Unit runit in removelist)
+            {
+                defenceunitlist.Remove(runit);
+            }
+
+            removelist.Clear();
+
+            
+            foreach (Unit aunit in attackunitlist)
+            {
+                if (aunit == null) //유효성
+                {
+                    removelist.Add(aunit);
+                }                
+            }
+            foreach (Unit runit in removelist)
+            {
+                attackunitlist.Remove(runit);
+            }
+
+
+            foreach(Unit dunit in defenceunitlist)
+            {
+                if(deftargetlist.Count <= 0 )
+                {
+                    break;
+                }
 
                 unitpattern dunitptrn = dunit.GetComponent<unitpattern>();
-                if(dunitptrn != null)
+                if (dunitptrn != null)
                 {
-                    if(dunitptrn.cancommand())
+                    if (dunitptrn.cancommand())
                     {
                         Unit t;
-                        if(tindex >= deftargetlist.Count)
+                        if (tindex >= deftargetlist.Count)
                         {
                             t = deftargetlist[UnityEngine.Random.Range(0, deftargetlist.Count)];
                         }
@@ -287,19 +327,12 @@ public class unitpattern : MonoBehaviour
                     }
                 }
             }
-            foreach(Unit runit in removelist)
-            {
-                defenceunitlist.Remove(runit);
-            }
-
-            removelist.Clear();
-
             tindex = 0;
             foreach (Unit aunit in attackunitlist)
             {
-                if (aunit == null) //유효성
+                if(targetlist.Count < 1)
                 {
-                    removelist.Add(aunit);
+                    break;
                 }
 
                 unitpattern aunitptrn = aunit.GetComponent<unitpattern>();
@@ -308,7 +341,7 @@ public class unitpattern : MonoBehaviour
                     if (aunitptrn.cancommand())
                     {
                         Unit t;
-                        if(tindex >= targetlist.Count)
+                        if (tindex >= targetlist.Count)
                         {
                             t = targetlist[UnityEngine.Random.Range(0, targetlist.Count)];
                         }
@@ -321,10 +354,6 @@ public class unitpattern : MonoBehaviour
                     }
 
                 }
-            }
-            foreach (Unit runit in removelist)
-            {
-                attackunitlist.Remove(runit);
             }
         }
 
@@ -373,7 +402,8 @@ public class unitpattern : MonoBehaviour
                     }
 
                     if(system.tilex(u.x) == dest.i[0] && system.tiley(u.y) == dest.i[1])
-                    {  
+                    {
+                        
                         complete = true;
                         break;
                     }
@@ -399,13 +429,14 @@ public class unitpattern : MonoBehaviour
                                 u.addaction(unitaction.typelist.movedest, new int[] { dest.i[0], dest.i[1] }, null, null);
                             }
 
+                            defered = false;
                             complete = false;
                             break;
                         }
                     }
 
-
-                    complete = false;
+                    dest.defered = true;
+                    complete = true;
                     //target이 있는 상태니까 그냥 unitproc으로넘겨줌
                 }
                 break;
