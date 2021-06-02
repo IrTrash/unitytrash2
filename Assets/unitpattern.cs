@@ -86,7 +86,6 @@ public class unitpattern : MonoBehaviour
     public Unit target;
     public float searchrange = 1;
     public int wpindex = -1; //이거 너무ㅡ 오래끌면 이 무기만 쓸려하지않을까? 고민
-    public bool defered = false;
     void unitproc() //20210510기준 이동 자체가 끝난 시점에서 처리를 하기 때문에 서로 가까워지려고 좌우로 움직이면 이동이 끝난 시점에 좌우가 뒤바뀌어서 다시 반복하게 됨. 수정이 필요할듯 <= 0512 : 대충랜덤
     {
         //어차피 자동적으로 action을 생성 후 추가하기 위한 거니까 행동불가거나 하고있는게 있으면 안 함.
@@ -429,7 +428,7 @@ public class unitpattern : MonoBehaviour
                                 u.addaction(unitaction.typelist.movedest, new int[] { dest.i[0], dest.i[1] }, null, null);
                             }
 
-                            defered = false;
+                            dest.defered = false;
                             complete = false;
                             break;
                         }
