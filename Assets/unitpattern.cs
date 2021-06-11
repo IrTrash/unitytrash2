@@ -140,7 +140,7 @@ public class unitpattern : MonoBehaviour
                 if(wpindex >= 0) //이미 선택한 무기가 있을 경우 
                 {
                     weapon wp = u.findweapon(wpindex);
-                    if(Mathf.Abs(u.x - target.x) + Mathf.Abs(u.y - target.y)  <= wp.range)
+                    if(Mathf.Abs(u.x - target.x) + Mathf.Abs(u.y - target.y)  <= wp.range + system.unitplacepushdistance)
                     {
                         Debug.Log("( " + target.x + " , " + target.y + " )");
                         u.addaction(unitaction.typelist.useweapon, new int[] { wpindex }, new float[] { target.x, target.y }, null);
