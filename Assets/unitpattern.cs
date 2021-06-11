@@ -21,9 +21,12 @@ public class unitpattern : MonoBehaviour
         proc();
     }
 
+    public bool pactionexist = false;
 
     void proc()
     {
+        pactionexist = currentpaction != null;
+
         if(u == null)
         {
             return;
@@ -349,6 +352,7 @@ public class unitpattern : MonoBehaviour
                             t = targetlist[tindex++];
                         }
 
+                        Debug.Log("asdfeqwrqwe");
                         aunitptrn.pactionrequest(new paction(paction.typelist.attackdown, new int[] { system.tilex(t.x), system.tiley(t.y) }, null, null));
                     }
 
@@ -414,7 +418,7 @@ public class unitpattern : MonoBehaviour
                         {
                             target = null;
                         }
-
+                        
                     }
 
                     if(target == null)
@@ -422,10 +426,13 @@ public class unitpattern : MonoBehaviour
                         target = findenemy(searchrange);
                         if(target == null)
                         {
+                            Debug.Log("attackdown move");
+
                             //암것도 안하고있으면 목적지 이동
-                            if(cancommand())
+                            if(u.canaction && u.currentaction == null && u.pushedaction == null && u.actionlist.Count < 1)
                             {
                                 u.addaction(unitaction.typelist.movedest, new int[] { dest.i[0], dest.i[1] }, null, null);
+                                Debug.Log("attackdown move - 1165687489");
                             }
 
                             dest.defered = false;

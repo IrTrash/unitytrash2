@@ -49,7 +49,6 @@ public class projectile : MonoBehaviour
         {            
             foreach(GameObject obj in objlist)
             {
-                Debug.Log(gameObject.name + " hitted " + obj.name);
                 Unit u = obj.GetComponent<Unit>();
                 if (u == null)
                 {

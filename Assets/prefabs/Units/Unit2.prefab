@@ -66,6 +66,7 @@ MonoBehaviour:
   pushedaction: {fileID: 0}
   actionlist: []
   colsize: 0.5
+  ub: {fileID: 0}
 --- !u!212 &7934228199606741276
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -81,6 +82,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -137,7 +139,7 @@ MonoBehaviour:
   cooldown: 10
   destx: 0
   desty: 0
-  range: 1
+  range: 2
   priority: 1
   state: 1
   statetime: 0
@@ -180,9 +182,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   u: {fileID: 0}
+  pactionexist: 0
   target: {fileID: 0}
   searchrange: 3
   wpindex: -1
+  myunits: []
+  defenceunitlist: []
+  attackunitlist: []
+  defenceunitcount: 4
+  defendrange: 2
+  targetlist: []
+  deftargetlist: []
+  ub: {fileID: 0}
 --- !u!114 &7934228199606741475
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -314,6 +314,7 @@ GameObject:
   - component: {fileID: 579538325}
   - component: {fileID: 579538324}
   - component: {fileID: 579538328}
+  - component: {fileID: 579538329}
   m_Layer: 0
   m_Name: pbuilding
   m_TagString: Unit
@@ -456,6 +457,30 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &579538329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 579538323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cde4ba78a3ef4454a9e20b8832aee961, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  u: {fileID: 0}
+  target: {fileID: 0}
+  searchrange: 5
+  wpindex: -1
+  myunits: []
+  defenceunitlist: []
+  attackunitlist: []
+  defenceunitcount: 4
+  defendrange: 1
+  targetlist: []
+  deftargetlist: []
+  ub: {fileID: 0}
 --- !u!1 &738768594
 GameObject:
   m_ObjectHideFlags: 0
@@ -469,6 +494,7 @@ GameObject:
   - component: {fileID: 738768595}
   - component: {fileID: 738768599}
   - component: {fileID: 738768598}
+  - component: {fileID: 738768600}
   m_Layer: 0
   m_Name: HumanBuilding1
   m_TagString: Untagged
@@ -607,6 +633,30 @@ MonoBehaviour:
   up: {fileID: 0}
   buildedunits: []
   unitcountmax: 10
+--- !u!114 &738768600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 738768594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cde4ba78a3ef4454a9e20b8832aee961, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  u: {fileID: 0}
+  target: {fileID: 0}
+  searchrange: 5
+  wpindex: -1
+  myunits: []
+  defenceunitlist: []
+  attackunitlist: []
+  defenceunitcount: 4
+  defendrange: 1
+  targetlist: []
+  deftargetlist: []
+  ub: {fileID: 0}
 --- !u!1 &1215980050
 GameObject:
   m_ObjectHideFlags: 0
