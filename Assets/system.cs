@@ -271,11 +271,41 @@ public class system : MonoBehaviour
         return r;
     }
 
+    bool secondtimer = false;
+    float dtime = 0;
 
 
     private void FixedUpdate()
     {
+        dtime += Time.fixedDeltaTime;
+        if(dtime >= 1)
+        {
+            dtime -= 1;
+            secondtimer = true;
+        }
+        else
+        {
+            secondtimer = false;
+        }
+
         unitplaceproc();
+        prisonerproc();
+    }
+
+    public List<prisoner> prisonerlist = new List<prisoner>();
+
+    private void prisonerproc()
+    {
+        if(secondtimer)
+        {
+            foreach(prisoner p in prisonerlist)
+            {
+                if(--p.life <= 0)
+                {
+                    Destroy(p.gameObject);
+                }
+            }
+        }
     }
 }
 
