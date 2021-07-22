@@ -307,5 +307,31 @@ public class system : MonoBehaviour
             }
         }
     }
+
+
+    public List<prisoner> findprisoner(float x1, float y1, float x2, float y2, int team)
+    {
+        GameObject[] pobjs = GameObject.FindGameObjectsWithTag("Prisoner");
+        if(pobjs == null)
+        {
+            return new List<prisoner>(); //empty list
+        }
+
+        List<prisoner> r = new List<prisoner>();
+        foreach(GameObject pobj in pobjs)
+        {
+            prisoner p = pobj.GetComponent<prisoner>();
+            if (p != null)
+            {
+                float px = pobj.transform.position.x, py = pobj.transform.position.y;
+                if(isin(px,py,x1,y1,x2,y2) && p.team != team)
+                {
+                    r.Add(p);
+                }
+            }
+        }
+
+        return r;
+    }
 }
 

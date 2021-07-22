@@ -6,7 +6,7 @@ public class Unit : MonoBehaviour
 {
     public enum _type : int
     {
-        unit = 1, building
+        unit = 1, building, obj
     }
 
     public _type type;

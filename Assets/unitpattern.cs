@@ -112,6 +112,16 @@ public class unitpattern : MonoBehaviour
             }
         }
 
+        //carrior
+        PrisonerCarrier pcr = gameObject.GetComponent<PrisonerCarrier>();
+        if(pcr != null)
+        {
+
+        }
+
+
+
+        //일반 유닛
         if (target == null)
         {
             target = findenemy(searchrange);

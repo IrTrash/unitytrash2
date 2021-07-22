@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class prisoner : MonoBehaviour
 {
-    public int life = 60;
+    public int life = 60, sanity = 10 , team = 0;
     public bool free = false;
 
+
+    public GameObject corruptresult;
 
     system sys;    
 
