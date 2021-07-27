@@ -10,6 +10,8 @@ public class Cocoon : MonoBehaviour
 
     public float dtime = 0;
 
+    public Animator anim;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -17,6 +19,12 @@ public class Cocoon : MonoBehaviour
         if(u == null)
         {
             u = gameObject.AddComponent<Unit>();
+        }
+
+        anim = GetComponent<Animator>();
+        if(anim != null)
+        {
+            anim.SetInteger("Time", time);
         }
                
     }
@@ -33,7 +41,13 @@ public class Cocoon : MonoBehaviour
             return;
         }
 
-        if(--time <= 0)
+        if (anim != null)
+        {
+            anim.SetInteger("Time", time);
+        }
+
+
+        if (--time <= 0)
         {
             if(result != null)
             {

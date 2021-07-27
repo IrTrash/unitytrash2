@@ -25,7 +25,15 @@ public class corruptor : MonoBehaviour
 
     void proc()
     {
-        if(current == null)
+        dtime += Time.fixedDeltaTime;
+        if (dtime >= 1)
+        {
+            dtime -= 1;
+            current.sanity--;
+        }
+
+
+        if (current == null)
         {
             if(list.Count > 0)
             {
@@ -72,15 +80,6 @@ public class corruptor : MonoBehaviour
                 }
 
                 current = null;
-            }
-            else
-            {
-                dtime += Time.fixedDeltaTime;
-                if(dtime >= 1)
-                {
-                    dtime -= 1;
-                    current.sanity--;
-                }
             }
         }
     }
