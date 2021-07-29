@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 9035037307696681260}
   - component: {fileID: 9035037307696681261}
-  - component: {fileID: 9035037307696681258}
   - component: {fileID: 9035037307696681262}
   - component: {fileID: 9035037307696681263}
   m_Layer: 0
@@ -56,22 +55,6 @@ MonoBehaviour:
   life: 40
   hitsize: 0.5
   elist: []
-  friendlyeffects: []
---- !u!114 &9035037307696681258
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9035037307696681259}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 470cc8f79f40b684b8fa11703471c38a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  type: 1
-  i: 01000000
-  f: []
 --- !u!212 &9035037307696681262
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -87,6 +70,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

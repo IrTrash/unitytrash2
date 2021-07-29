@@ -29,7 +29,11 @@ public class corruptor : MonoBehaviour
         if (dtime >= 1)
         {
             dtime -= 1;
-            current.sanity--;
+            if(current != null)
+            {
+                current.sanity--;
+                current.life++; //생명은유지
+            }            
         }
 
 
@@ -83,4 +87,18 @@ public class corruptor : MonoBehaviour
             }
         }
     }
+
+
+    public bool receiveprisoner(prisoner dest)
+    {
+        if(dest == null)
+        {
+            return false;  
+        }
+
+        list.Add(dest);
+        
+        return true;
+    }
+
 }

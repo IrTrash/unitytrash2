@@ -51,7 +51,8 @@ public class Unit : MonoBehaviour
             state = statetypes.idle;
         }
 
-
+        x = gameObject.transform.position.x;
+        y = gameObject.transform.position.y;
         positionupdate();
 
         BoxCollider2D cd = GetComponent<BoxCollider2D>();

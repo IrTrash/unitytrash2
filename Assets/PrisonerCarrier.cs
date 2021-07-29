@@ -64,9 +64,13 @@ public class PrisonerCarrier : MonoBehaviour
         {
             return false;
         }
-        
 
+        if(dest.receiveprisoner(currentprisoner))
+        {
+            currentprisoner = null;
+            return true;
+        }
 
-        return true;
+        return false;
     }
 }

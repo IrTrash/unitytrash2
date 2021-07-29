@@ -87,7 +87,7 @@ public class unitpattern : MonoBehaviour
 
 
     public Unit target;
-    public float searchrange = 1;
+    public float searchrange = 2; //1은 너무 짧다
     public int wpindex = -1; //이거 너무ㅡ 오래끌면 이 무기만 쓸려하지않을까? 고민
     void unitproc() //20210510기준 이동 자체가 끝난 시점에서 처리를 하기 때문에 서로 가까워지려고 좌우로 움직이면 이동이 끝난 시점에 좌우가 뒤바뀌어서 다시 반복하게 됨. 수정이 필요할듯 <= 0512 : 대충랜덤
     {

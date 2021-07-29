@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 7740588585208690235}
   - component: {fileID: 8423355492335321239}
   - component: {fileID: 783141033693763216}
-  - component: {fileID: 2904762007899966209}
   m_Layer: 0
   m_Name: Unit1attack
   m_TagString: Untagged
@@ -70,6 +69,7 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -105,18 +105,3 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &2904762007899966209
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5194383766250545162}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 470cc8f79f40b684b8fa11703471c38a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  type: 1
-  i: 01000000
-  f: []
