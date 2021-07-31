@@ -13,6 +13,7 @@ public class Cocoon : MonoBehaviour
     public Animator anim;
     private int starttime;
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,7 +21,7 @@ public class Cocoon : MonoBehaviour
         if(u == null)
         {
             u = gameObject.AddComponent<Unit>();
-        }
+        }        
 
         anim = GetComponent<Animator>();
         if(anim != null)
@@ -57,7 +58,9 @@ public class Cocoon : MonoBehaviour
             {
                 GameObject robj = Instantiate(result, gameObject.transform.position, Quaternion.identity);
                 Unit ru = robj.GetComponent<Unit>();
-                ru.team = u.team;
+
+                system.ownunit(u.ownerup, ru);
+
             }
 
             Destroy(this.gameObject);

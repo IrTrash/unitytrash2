@@ -12,10 +12,12 @@ public class corruptor : MonoBehaviour
 
     public float dtime = 0;
 
+    public unitpattern up;
 
     private void Start()
     {
-        u = gameObject.GetComponent<Unit>();            
+        u = gameObject.GetComponent<Unit>();
+        up = gameObject.GetComponent<unitpattern>();
     }
 
     private void FixedUpdate()
@@ -45,12 +47,14 @@ public class corruptor : MonoBehaviour
                 if(list.Count > 1)
                 {
                     list = new List<prisoner>(list.GetRange(1, list.Count - 1));
-                }
-
+                }                
             }
         }
         else
         {
+            current.corrupting = true;
+            current.free = false;
+
             if(current.sanity <= 0)
             {
                 if(current.corruptresult != null)
@@ -63,7 +67,9 @@ public class corruptor : MonoBehaviour
                     GameObject result = GameObject.Instantiate(current.corruptresult, new Vector3(rx, ry), Quaternion.identity);
                     //추가 정보 입력
                     Unit ru = result.GetComponent<Unit>();
-                    ru.team = u.team;
+
+                    system.ownunit(up, ru);                                        
+
 
                     Destroy(current.gameObject);
 

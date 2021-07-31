@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d45f4f300f3cb543ba3b16154af3939, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
+  type: 3
   x: 0
   y: 0
   team: 1
@@ -64,6 +64,7 @@ MonoBehaviour:
   actionlist: []
   colsize: 0.5
   ub: {fileID: 0}
+  ownerup: {fileID: 0}
 --- !u!114 &5816419776236596168
 MonoBehaviour:
   m_ObjectHideFlags: 0

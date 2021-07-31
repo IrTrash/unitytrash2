@@ -333,5 +333,26 @@ public class system : MonoBehaviour
 
         return r;
     }
+
+
+    public static bool ownunit(unitpattern owner, Unit dest)
+    {
+        if(owner == null || dest == null)
+        {
+            return false;
+        }
+
+        dest.ownerup = owner;
+        if(!owner.myunits.Contains(dest))
+        {
+            owner.myunits.Add(dest);
+        }
+        if(owner.u != null)
+        {
+            dest.team = owner.u.team;
+        }
+        return true;
+    }
+
 }
 

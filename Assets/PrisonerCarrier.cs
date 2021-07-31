@@ -21,6 +21,14 @@ public class PrisonerCarrier : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        if(currentprisoner != null)
+        {
+            currentprisoner.free = true;
+        }
+    }
+
     private void FixedUpdate()
     {
         proc();
@@ -31,6 +39,7 @@ public class PrisonerCarrier : MonoBehaviour
     {
         if(currentprisoner != null)
         {
+            currentprisoner.free = false;
             currentprisoner.gameObject.transform.position = new Vector3(gameObject.transform.position.x + cx, gameObject.transform.position.y + cy);
         }
     }

@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class prisoner : MonoBehaviour
 {
-    public int life = 60, sanity = 10 , team = 0;
-    public bool free = false;
+    public int life = 60, maxsanity = 10, sanity = 10 , team = 0;
+    public bool free = false, corrupting = false;
 
 
     public GameObject corruptresult;
 
-    system sys;    
+    system sys;
+
+    public Animator anim;
 
     private void Start()
     {
@@ -19,6 +21,10 @@ public class prisoner : MonoBehaviour
         {
             sys.prisonerlist.Add(this);
         }
+
+        anim = gameObject.GetComponent<Animator>();
+
+        sanity = maxsanity;
     }
 
     private void OnDestroy()
@@ -27,6 +33,27 @@ public class prisoner : MonoBehaviour
         {
             sys.prisonerlist.Remove(this);
         }
+    }
+
+    float dtime = 0;
+    private void FixedUpdate()
+    {
+        dtime += Time.fixedDeltaTime;
+        if(dtime >= 1)
+        {
+            dtime -= 1;
+            if(free && sanity < maxsanity)
+            {
+                sanity++;
+            }
+        }
+
+        if(anim != null)
+        {
+            anim.SetBool("corrupting", corrupting);
+            anim.SetInteger("sanity", sanity);
+        }
+
     }
 
 }

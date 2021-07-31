@@ -14,6 +14,8 @@ public class unitpattern : MonoBehaviour
             u = gameObject.GetComponent<Unit>();          
         }
 
+
+        crtr = gameObject.GetComponent<corruptor>();
     }
 
     private void FixedUpdate()
@@ -223,6 +225,11 @@ public class unitpattern : MonoBehaviour
     public int defendrange = 2;//적이 이 범위안에오면 방어 유닛을 그 적으로 보냄
     public List<Unit> targetlist = new List<Unit>(), deftargetlist = new List<Unit>(); //여러 타겟 
     public Unitbuilder ub;
+
+    public corruptor crtr;
+    public List<PrisonerCarrier> carrierlist = new List<PrisonerCarrier>();
+    public int carriercount = 2;
+
     void buildingproc() //생산건물 전용 패턴.
     {
         //이 함수가 돌아가야할 상황인지
@@ -244,7 +251,7 @@ public class unitpattern : MonoBehaviour
                     ub.request(UnityEngine.Random.Range(0, options.Length));
                 }
             }
-
+            
 
             foreach(Unit bunit in ub.buildedunits)
             {
@@ -253,123 +260,181 @@ public class unitpattern : MonoBehaviour
                     continue;
                 }
 
-                if(defenceunitlist.Count < defenceunitcount)
+                if(!myunits.Contains(bunit))
                 {
-                    if(!defenceunitlist.Contains(bunit))
+                    myunits.Add(bunit);
+                }
+            }
+
+           
+        }
+
+
+
+        foreach (Unit myunit in myunits) //이런거 너무 불필요한 체크 많이 할거같은데 괜찮을까?
+        {
+            if (myunit == null)
+            {
+                continue;
+            }
+
+            if (carrierlist.Count < carriercount)
+            {
+                PrisonerCarrier pscr = myunit.GetComponent<PrisonerCarrier>();
+                if (pscr != null)
+                {
+                    if (!carrierlist.Contains(pscr))
                     {
-                        defenceunitlist.Add(bunit);
-                    }
-                }
-                else // attackunitlist
-                {
-                    if(!attackunitlist.Contains(bunit))
-                    {
-                        attackunitlist.Add(bunit);
-                    }
-
-                }
-            }
-
-            //타겟 검출
-            targetlist = findenemies(searchrange);
-            deftargetlist = findenemies(defendrange);
-
-            foreach(Unit tu in deftargetlist)
-            {
-                targetlist.Remove(tu);
-            }
-
-
-            //내 유닛 처리
-            List<Unit> removelist = new List<Unit>();
-
-            int tindex = 0;
-            //defunits
-            foreach(Unit dunit in defenceunitlist)
-            {
-                if (dunit == null) //유효성
-                {
-                    removelist.Add(dunit);
-                }
-            }
-            foreach(Unit runit in removelist)
-            {
-                defenceunitlist.Remove(runit);
-            }
-
-            removelist.Clear();
-
-            
-            foreach (Unit aunit in attackunitlist)
-            {
-                if (aunit == null) //유효성
-                {
-                    removelist.Add(aunit);
-                }                
-            }
-            foreach (Unit runit in removelist)
-            {
-                attackunitlist.Remove(runit);
-            }
-
-
-            foreach(Unit dunit in defenceunitlist)
-            {
-                if(deftargetlist.Count <= 0 )
-                {
-                    break;
-                }
-
-                unitpattern dunitptrn = dunit.GetComponent<unitpattern>();
-                if (dunitptrn != null)
-                {
-                    if (dunitptrn.cancommand())
-                    {
-                        Unit t;
-                        if (tindex >= deftargetlist.Count)
-                        {
-                            t = deftargetlist[UnityEngine.Random.Range(0, deftargetlist.Count)];
-                        }
-                        else
-                        {
-                            t = deftargetlist[tindex++];
-                        }
-
-                        dunitptrn.pactionrequest(new paction(paction.typelist.attackdown, new int[] { system.tilex(t.x), system.tiley(t.y) }, null, null));
+                        carrierlist.Add(pscr);
                     }
                 }
             }
-            tindex = 0;
-            foreach (Unit aunit in attackunitlist)
+
+
+            if (defenceunitlist.Count < defenceunitcount)
             {
-                if(targetlist.Count < 1)
+                if (!defenceunitlist.Contains(myunit))
                 {
-                    break;
+                    defenceunitlist.Add(myunit);
+                }
+            }
+            else // attackunitlist
+            {
+                if (!attackunitlist.Contains(myunit))
+                {
+                    attackunitlist.Add(myunit);
                 }
 
-                unitpattern aunitptrn = aunit.GetComponent<unitpattern>();
-                if (aunitptrn != null)
-                {
-                    if (aunitptrn.cancommand())
-                    {
-                        Unit t;
-                        if (tindex >= targetlist.Count)
-                        {
-                            t = targetlist[UnityEngine.Random.Range(0, targetlist.Count)];
-                        }
-                        else
-                        {
-                            t = targetlist[tindex++];
-                        }
+            }
+        }
 
-                        Debug.Log("asdfeqwrqwe");
-                        aunitptrn.pactionrequest(new paction(paction.typelist.attackdown, new int[] { system.tilex(t.x), system.tiley(t.y) }, null, null));
+        //타겟 검출
+        targetlist = findenemies(searchrange);
+        deftargetlist = findenemies(defendrange);
+
+        foreach (Unit tu in deftargetlist)
+        {
+            targetlist.Remove(tu);
+        }
+
+        //방어,공격 유닛 운용            
+        List<Unit> removelist = new List<Unit>();
+        int tindex = 0;
+
+        removelist.Clear();
+        //defunits
+        foreach (Unit dunit in defenceunitlist)
+        {
+            if (dunit == null) //유효성
+            {
+                removelist.Add(dunit);
+            }
+        }
+        foreach (Unit runit in removelist)
+        {
+            defenceunitlist.Remove(runit);
+        }
+
+        removelist.Clear();
+
+
+        foreach (Unit aunit in attackunitlist)
+        {
+            if (aunit == null) //유효성
+            {
+                removelist.Add(aunit);
+            }
+        }
+        foreach (Unit runit in removelist)
+        {
+            attackunitlist.Remove(runit);
+        }
+
+
+        foreach (Unit dunit in defenceunitlist)
+        {
+            if (deftargetlist.Count <= 0)
+            {
+                break;
+            }
+
+            unitpattern dunitptrn = dunit.GetComponent<unitpattern>();
+            if (dunitptrn != null)
+            {
+                if (dunitptrn.cancommand())
+                {
+                    Unit t;
+                    if (tindex >= deftargetlist.Count)
+                    {
+                        t = deftargetlist[UnityEngine.Random.Range(0, deftargetlist.Count)];
                     }
+                    else
+                    {
+                        t = deftargetlist[tindex++];
+                    }
+
+                    dunitptrn.pactionrequest(new paction(paction.typelist.attackdown, new int[] { system.tilex(t.x), system.tiley(t.y) }, null, null));
+                }
+            }
+        }
+        tindex = 0;
+        foreach (Unit aunit in attackunitlist)
+        {
+            if (targetlist.Count < 1)
+            {
+                break;
+            }
+
+            unitpattern aunitptrn = aunit.GetComponent<unitpattern>();
+            if (aunitptrn != null)
+            {
+                if (aunitptrn.cancommand())
+                {
+                    Unit t;
+                    if (tindex >= targetlist.Count)
+                    {
+                        t = targetlist[UnityEngine.Random.Range(0, targetlist.Count)];
+                    }
+                    else
+                    {
+                        t = targetlist[tindex++];
+                    }
+
+                    Debug.Log("asdfeqwrqwe");
+                    aunitptrn.pactionrequest(new paction(paction.typelist.attackdown, new int[] { system.tilex(t.x), system.tiley(t.y) }, null, null));
+                }
+
+            }
+        }
+
+        system sys = system.findsystem();
+        if (sys != null)
+        {
+            List<PrisonerCarrier> carriorremove = new List<PrisonerCarrier>();
+            //carrior 처리
+            foreach (PrisonerCarrier carrier in carrierlist)
+            {
+                if (carrier == null)
+                {
+                    carriorremove.Add(carrier);
+                    continue;
+                }
+
+                //prisoner detect
+
+                List<prisoner> candidates = new List<prisoner>(sys.findprisoner(u.ix - searchrange, u.iy - searchrange, u.ix + searchrange, u.iy + searchrange, u.team));
+                foreach(prisoner candidate in candidates)
+                {
+                    if(candidate == null)
+                    {
+                        continue;
+                    }
+
 
                 }
             }
         }
-
+        
 
     }
 

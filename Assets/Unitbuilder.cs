@@ -78,13 +78,10 @@ public class Unitbuilder : MonoBehaviour
                             }
                         }
                     }
-                    
+
 
                     //up가 존재하면 myunit에 추가
-                    if(up != null)
-                    {
-                        up.myunits.Add(u);
-                    }
+                    system.ownunit(up, bufunit);
                 }
                 
 

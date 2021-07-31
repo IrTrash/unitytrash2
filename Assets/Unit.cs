@@ -38,6 +38,8 @@ public class Unit : MonoBehaviour
 
     public Unitbuilder ub;
 
+    public unitpattern ownerup;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -93,7 +95,12 @@ public class Unit : MonoBehaviour
 
         if(ub != null)
         {
-            ub.buildedunits.Remove(this);
+            ub.buildedunits.Remove(this);            
+        }
+
+        if(ownerup != null)
+        {
+            ownerup.myunits.Remove(this);
         }
     }
 
@@ -111,7 +118,7 @@ public class Unit : MonoBehaviour
 
         //행동 가능 판정
         canaction = state == statetypes.idle;
-        canmove = canaction; //이동 가능이라는 것은 새로운 쪽으로 이동이 가능하냐는 뜻임. 즉 이미 이동하는 중에는 false
+        canmove = canaction && type != _type.obj; //이동 가능이라는 것은 새로운 쪽으로 이동이 가능하냐는 뜻임. 즉 이미 이동하는 중에는 false
 
         switch (state)
         {
