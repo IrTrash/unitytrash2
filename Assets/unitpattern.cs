@@ -229,6 +229,7 @@ public class unitpattern : MonoBehaviour
     public corruptor crtr;
     public List<PrisonerCarrier> carrierlist = new List<PrisonerCarrier>();
     public int carriercount = 2;
+    public List<prisoner> prisonertargetlist = new List<prisoner>();
 
     void buildingproc() //생산건물 전용 패턴.
     {
@@ -409,7 +410,7 @@ public class unitpattern : MonoBehaviour
 
         system sys = system.findsystem();
         if (sys != null)
-        {
+        {            
             List<PrisonerCarrier> carriorremove = new List<PrisonerCarrier>();
             //carrior 처리
             foreach (PrisonerCarrier carrier in carrierlist)
@@ -420,17 +421,25 @@ public class unitpattern : MonoBehaviour
                     continue;
                 }
 
+                unitpattern cup = carrier.gameObject.GetComponent<unitpattern>();
+                if(!cup.cancommand())
+                {
+                    continue;
+                }
+
                 //prisoner detect
 
                 List<prisoner> candidates = new List<prisoner>(sys.findprisoner(u.ix - searchrange, u.iy - searchrange, u.ix + searchrange, u.iy + searchrange, u.team));
                 foreach(prisoner candidate in candidates)
                 {
-                    if(candidate == null)
+                    if(candidate == null || prisonertargetlist.Contains(candidate))
                     {
                         continue;
                     }
 
 
+
+                    prisonertargetlist.Add(candidate);
                 }
             }
         }
