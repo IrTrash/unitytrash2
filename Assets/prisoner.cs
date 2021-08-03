@@ -5,7 +5,7 @@ using UnityEngine;
 public class prisoner : MonoBehaviour
 {
     public int life = 60, maxsanity = 10, sanity = 10 , team = 0;
-    public bool free = false, corrupting = false;
+    public bool free = true, corrupting = false;
 
 
     public GameObject corruptresult;

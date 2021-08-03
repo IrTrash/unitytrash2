@@ -48,6 +48,10 @@ public class corruptor : MonoBehaviour
                 {
                     list = new List<prisoner>(list.GetRange(1, list.Count - 1));
                 }                
+                else
+                {
+                    list = new List<prisoner>();
+                }
             }
         }
         else
@@ -91,6 +95,11 @@ public class corruptor : MonoBehaviour
 
                 current = null;
             }
+        }
+
+        foreach(prisoner p in list)
+        {
+            p.life++;
         }
     }
 

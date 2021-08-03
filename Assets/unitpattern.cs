@@ -91,6 +91,7 @@ public class unitpattern : MonoBehaviour
     public Unit target;
     public float searchrange = 2; //1은 너무 짧다
     public int wpindex = -1; //이거 너무ㅡ 오래끌면 이 무기만 쓸려하지않을까? 고민
+    public corruptor mycorruptor;
     void unitproc() //20210510기준 이동 자체가 끝난 시점에서 처리를 하기 때문에 서로 가까워지려고 좌우로 움직이면 이동이 끝난 시점에 좌우가 뒤바뀌어서 다시 반복하게 됨. 수정이 필요할듯 <= 0512 : 대충랜덤
     {
         //어차피 자동적으로 action을 생성 후 추가하기 위한 거니까 행동불가거나 하고있는게 있으면 안 함.
@@ -114,29 +115,67 @@ public class unitpattern : MonoBehaviour
             }
         }
 
-        //carrior
-        PrisonerCarrier pcr = gameObject.GetComponent<PrisonerCarrier>();
-        if(pcr != null)
+        if(!u.actionavailable())
         {
-
+            return;
         }
-
-
-
+        
         //일반 유닛
         if (target == null)
         {
             target = findenemy(searchrange);
             if (target == null) //찾아도 없으면
             {
+                //carrior
+                if (mycorruptor != null)
+                {
+                    PrisonerCarrier pcr = gameObject.GetComponent<PrisonerCarrier>();
+                    if (pcr != null)
+                    {
+                        if (pcr.currentprisoner != null)
+                        {
+                            if (!pcr.sendprisoner(mycorruptor))
+                            {
+                                //위치가 안되는것인지 여부는 나중에 따지기로
+                                u.addaction(unitaction.typelist.movedest, new int[] { system.tilex(mycorruptor.transform.position.x), system.tiley(mycorruptor.transform.position.y) }, null);                                
+                            }
 
+                        }
+                        else
+                        {
+                            if(pcr.pickprionserinrange())
+                            {
+                                Debug.Log("3311");
+                            }
+                            else
+                            {
+                                Debug.Log("finding prisoner");
+                                //find prisoner
+                                system sys = system.findsystem();
+                                Unit cu = mycorruptor.GetComponent<Unit>();
+                                unitpattern cup = mycorruptor.GetComponent<unitpattern>();
+                                if (sys != null && cup != null && cu != null)
+                                {
+                                    List<prisoner> candidates = sys.findprisoner(cu.tx - cup.searchrange, cu.ty - cup.searchrange, cu.tx + cup.searchrange, cu.ty + cup.searchrange, cu.team);
+                                    if (candidates.Count > 0)
+                                    {
+                                        prisoner dest = candidates[Random.Range(0, candidates.Count)];
+                                        u.addaction(unitaction.typelist.movedest, new int[] { system.tilex(dest.gameObject.transform.position.x), system.tiley(dest.gameObject.transform.position.y) }, null);
+                                    }
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+                else
+                {
+                    //가만히 있게 아무것도 안썼는데 배회하게 하는게 나을수도?
+                }
+                
             }
-        }
 
-        if (!u.canaction || u.actionlist.Count > 0 || u.currentaction != null || u.pushedaction != null)
-        {            
-            return;
-        }
+        }    
 
         
         
@@ -154,13 +193,11 @@ public class unitpattern : MonoBehaviour
                     weapon wp = u.findweapon(wpindex);
                     if(Mathf.Abs(u.x - target.x) + Mathf.Abs(u.y - target.y)  <= wp.range + system.unitplacepushdistance)
                     {
-                        Debug.Log("( " + target.x + " , " + target.y + " )");
                         u.addaction(unitaction.typelist.useweapon, new int[] { wpindex }, new float[] { target.x, target.y }, null);
                         wpindex = -1;
                     }
                     else //접근 
                     {
-                        Debug.Log("asdf");
                         u.addaction(unitaction.typelist.approach, new int[] { target.ix, target.iy ,1 }, null );
                     }                                        
                 }
@@ -229,7 +266,6 @@ public class unitpattern : MonoBehaviour
     public corruptor crtr;
     public List<PrisonerCarrier> carrierlist = new List<PrisonerCarrier>();
     public int carriercount = 2;
-    public List<prisoner> prisonertargetlist = new List<prisoner>();
 
     void buildingproc() //생산건물 전용 패턴.
     {
@@ -270,7 +306,7 @@ public class unitpattern : MonoBehaviour
            
         }
 
-
+        corruptor crt = gameObject.GetComponent<corruptor>();
 
         foreach (Unit myunit in myunits) //이런거 너무 불필요한 체크 많이 할거같은데 괜찮을까?
         {
@@ -279,17 +315,7 @@ public class unitpattern : MonoBehaviour
                 continue;
             }
 
-            if (carrierlist.Count < carriercount)
-            {
-                PrisonerCarrier pscr = myunit.GetComponent<PrisonerCarrier>();
-                if (pscr != null)
-                {
-                    if (!carrierlist.Contains(pscr))
-                    {
-                        carrierlist.Add(pscr);
-                    }
-                }
-            }
+            
 
 
             if (defenceunitlist.Count < defenceunitcount)
@@ -298,10 +324,26 @@ public class unitpattern : MonoBehaviour
                 {
                     defenceunitlist.Add(myunit);
                 }
-            }
-            else // attackunitlist
+            }            
+            else // prisonercarrier -> attackunitlist
             {
-                if (!attackunitlist.Contains(myunit))
+                if (carrierlist.Count < carriercount)
+                {
+                    PrisonerCarrier pscr = myunit.GetComponent<PrisonerCarrier>();
+                    if (pscr != null)
+                    {
+                        if (!carrierlist.Contains(pscr))
+                        {
+                            carrierlist.Add(pscr);
+                            unitpattern myunitp = myunit.GetComponent<unitpattern>();
+                            if(myunitp != null)
+                            {
+                                myunitp.mycorruptor = crt;
+                            }
+                        }
+                    }
+                }
+                else if (!attackunitlist.Contains(myunit))
                 {
                     attackunitlist.Add(myunit);
                 }
@@ -401,49 +443,25 @@ public class unitpattern : MonoBehaviour
                         t = targetlist[tindex++];
                     }
 
-                    Debug.Log("asdfeqwrqwe");
                     aunitptrn.pactionrequest(new paction(paction.typelist.attackdown, new int[] { system.tilex(t.x), system.tiley(t.y) }, null, null));
                 }
 
             }
         }
 
-        system sys = system.findsystem();
-        if (sys != null)
-        {            
-            List<PrisonerCarrier> carriorremove = new List<PrisonerCarrier>();
-            //carrior 처리
-            foreach (PrisonerCarrier carrier in carrierlist)
+        List<PrisonerCarrier> pcremove = new List<PrisonerCarrier>();
+        foreach(PrisonerCarrier pc in carrierlist)
+        {
+            if(pc == null)
             {
-                if (carrier == null)
-                {
-                    carriorremove.Add(carrier);
-                    continue;
-                }
-
-                unitpattern cup = carrier.gameObject.GetComponent<unitpattern>();
-                if(!cup.cancommand())
-                {
-                    continue;
-                }
-
-                //prisoner detect
-
-                List<prisoner> candidates = new List<prisoner>(sys.findprisoner(u.ix - searchrange, u.iy - searchrange, u.ix + searchrange, u.iy + searchrange, u.team));
-                foreach(prisoner candidate in candidates)
-                {
-                    if(candidate == null || prisonertargetlist.Contains(candidate))
-                    {
-                        continue;
-                    }
-
-
-
-                    prisonertargetlist.Add(candidate);
-                }
+                pcremove.Add(pc);
             }
         }
-        
+        foreach(PrisonerCarrier pc in pcremove)
+        {
+            carrierlist.Remove(pc);
+        }
+
 
     }
 
@@ -486,6 +504,7 @@ public class unitpattern : MonoBehaviour
                             complete = true;
                             break;
                         }
+                        dest.i = new int[] { dest.i[0], dest.i[1], 0 };
                     }
 
                     if(system.tilex(u.x) == dest.i[0] && system.tiley(u.y) == dest.i[1])
@@ -502,7 +521,8 @@ public class unitpattern : MonoBehaviour
                         {
                             target = null;
                         }
-                        
+
+                        dest.i[2] = 0;
                     }
 
                     if(target == null)
@@ -510,17 +530,23 @@ public class unitpattern : MonoBehaviour
                         target = findenemy(searchrange);
                         if(target == null)
                         {
-                            Debug.Log("attackdown move");
-
-                            //암것도 안하고있으면 목적지 이동
-                            if(u.canaction && u.currentaction == null && u.pushedaction == null && u.actionlist.Count < 1)
+                            if (++dest.i[2] > 2)
                             {
-                                u.addaction(unitaction.typelist.movedest, new int[] { dest.i[0], dest.i[1] }, null, null);
-                                Debug.Log("attackdown move - 1165687489");
+                                complete = true;
+                                break;
                             }
 
+
+                            //암것도 안하고있으면 목적지 이동
+                            if (u.canaction && u.currentaction == null && u.pushedaction == null && u.actionlist.Count < 1)
+                            {
+                                u.addaction(unitaction.typelist.movedest, new int[] { dest.i[0], dest.i[1] }, null, null);
+                            }                            
+
                             dest.defered = false;
-                            complete = false;
+                            complete = false;                            
+
+                            Debug.Log("aldo");
                             break;
                         }
                     }
@@ -530,6 +556,7 @@ public class unitpattern : MonoBehaviour
                     //target이 있는 상태니까 그냥 unitproc으로넘겨줌
                 }
                 break;
+
         }
 
         if(!dest.started)

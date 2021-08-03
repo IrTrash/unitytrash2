@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 5744055826576770882}
   - component: {fileID: 5744055826576770883}
   - component: {fileID: 5744055826576770885}
+  - component: {fileID: -5613975093820536407}
   m_Layer: 0
   m_Name: Unit1
   m_TagString: Unit
@@ -67,6 +68,7 @@ MonoBehaviour:
   actionlist: []
   colsize: 0.5
   ub: {fileID: 0}
+  ownerup: {fileID: 0}
 --- !u!212 &5744055826576770889
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -186,6 +188,7 @@ MonoBehaviour:
   target: {fileID: 0}
   searchrange: 3
   wpindex: -1
+  mycorruptor: {fileID: 0}
   myunits: []
   defenceunitlist: []
   attackunitlist: []
@@ -194,6 +197,9 @@ MonoBehaviour:
   targetlist: []
   deftargetlist: []
   ub: {fileID: 0}
+  crtr: {fileID: 0}
+  carrierlist: []
+  carriercount: 2
 --- !u!114 &5744055826576770883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -228,3 +234,20 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &-5613975093820536407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5744055826576770890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3776853e6f2be049b28b200a1607ed7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  result: {fileID: 4698302063568840854, guid: 9d6fafb8edb0b7c49baa8ffd230fe070, type: 3}
+  xplus: 0
+  yplus: 0
+  rate: 0.3
+  r: 0

@@ -54,7 +54,7 @@ MonoBehaviour:
   x: 3
   y: 3
   team: 1
-  hp: 10
+  hp: 15
   pretx: 0
   prety: 0
   direction: 4
@@ -68,6 +68,7 @@ MonoBehaviour:
   actionlist: []
   colsize: 0.5
   ub: {fileID: 0}
+  ownerup: {fileID: 0}
 --- !u!212 &7934228199606741276
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -195,6 +196,10 @@ MonoBehaviour:
   targetlist: []
   deftargetlist: []
   ub: {fileID: 0}
+  crtr: {fileID: 0}
+  carrierlist: []
+  carriercount: 2
+  prisonertargetlist: []
 --- !u!114 &7934228199606741475
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -241,3 +246,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c95927a3cb189a4abf5d6046c9819f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentprisoner: {fileID: 0}
+  destcorruptor: {fileID: 0}
+  pickrange: 1
+  cx: 0
+  cy: 0
+  sendrange: 1

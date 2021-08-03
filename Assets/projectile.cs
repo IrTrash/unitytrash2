@@ -137,7 +137,6 @@ public class projectile : MonoBehaviour
             return null;
         }
 
-        Debug.Log("asdf");
 
         List<GameObject> r = new List<GameObject>();
         foreach(Collider2D c in clist)
@@ -147,7 +146,6 @@ public class projectile : MonoBehaviour
                 continue;
             }
 
-            Debug.Log("qwer");
             r.Add(c.gameObject);
         }
 

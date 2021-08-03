@@ -300,6 +300,8 @@ public class system : MonoBehaviour
         {
             foreach(prisoner p in prisonerlist)
             {
+                
+                
                 if(--p.life <= 0)
                 {
                     Destroy(p.gameObject);
@@ -354,5 +356,10 @@ public class system : MonoBehaviour
         return true;
     }
 
+
+    public static float distance(float x1, float y1, float x2, float y2)
+    {
+        return Mathf.Sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+    }
 }
 

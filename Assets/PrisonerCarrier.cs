@@ -53,15 +53,24 @@ public class PrisonerCarrier : MonoBehaviour
         }
 
         List<prisoner> candidates = sys.findprisoner(transform.position.x - pickrange, transform.position.y - pickrange, transform.position.x + pickrange, transform.position.y + pickrange, team);
-        if(candidates.Count < 1)
+        foreach(prisoner candidate in candidates)
         {
-            return false;
+            if(candidate == null)
+            {
+                continue;
+            }
+
+            if(!candidate.free || candidate.corrupting )
+            {
+                continue;
+            }
+
+            currentprisoner = candidate;
         }
 
 
-        currentprisoner = candidates[UnityEngine.Random.Range(0, candidates.Count)];
-
-        return true;
+        return currentprisoner != null;
+            
     }
 
 
@@ -69,7 +78,11 @@ public class PrisonerCarrier : MonoBehaviour
 
     public bool sendprisoner(corruptor dest)
     {
-        if(dest == null || currentprisoner == null)
+        if (dest == null || currentprisoner == null)
+        {
+            return false;
+        }
+        else if (system.distance(transform.position.x, transform.position.y, dest.transform.position.x, dest.transform.position.y) > sendrange)
         {
             return false;
         }

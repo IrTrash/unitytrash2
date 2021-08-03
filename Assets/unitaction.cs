@@ -211,15 +211,16 @@ public class unitaction : MonoBehaviour
                         {
                             List<int> ilist = new List<int>
                             {
-                                1 //index
+                                1
                             };
+                            
                             foreach (Unit._direction dn in d)
                             {
                                 if(ilist.Count > i[2])
                                 {
                                     break;
                                 }
-                                ilist.Add((int)dn);
+                                ilist.Add((int)dn);                                
                             }
                             i = ilist.ToArray();
                         }

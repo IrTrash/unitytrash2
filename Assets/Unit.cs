@@ -202,7 +202,8 @@ public class Unit : MonoBehaviour
     public int ix => (int)x;
     public int iy => (int)y;
 
-
+    public int tx => system.tilex(x);
+    public int ty => system.tilex(y);
 
 
     public enum factortype : int
@@ -481,5 +482,10 @@ public class Unit : MonoBehaviour
     }
 
 
+
+    public bool actionavailable()
+    {
+        return canaction && currentaction == null && actionlist.Count < 1 && pushedaction == null;
+    }
 
 }
