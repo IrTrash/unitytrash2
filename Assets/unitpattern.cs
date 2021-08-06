@@ -99,17 +99,10 @@ public class unitpattern : MonoBehaviour
         {
             if(pactionproc(currentpaction))
             {
-                if(currentpaction.defered)
-                {
-                    
-                }
-                else
-                {
-                    currentpaction = null;
-                }
+                currentpaction = null;
                     
             }                        
-            else
+            else if(!currentpaction.defered)
             {
                 return;
             }
@@ -381,6 +374,7 @@ public class unitpattern : MonoBehaviour
         removelist.Clear();
 
 
+        //atkunits
         foreach (Unit aunit in attackunitlist)
         {
             if (aunit == null) //유효성
@@ -393,6 +387,7 @@ public class unitpattern : MonoBehaviour
             attackunitlist.Remove(runit);
         }
 
+        //타겟 운용 방식 잘못됨(0804)
 
         foreach (Unit dunit in defenceunitlist)
         {
@@ -420,6 +415,7 @@ public class unitpattern : MonoBehaviour
                 }
             }
         }
+
         tindex = 0;
         foreach (Unit aunit in attackunitlist)
         {
@@ -433,6 +429,7 @@ public class unitpattern : MonoBehaviour
             {
                 if (aunitptrn.cancommand())
                 {
+                    Debug.Log("attackunit command");
                     Unit t;
                     if (tindex >= targetlist.Count)
                     {
@@ -492,68 +489,53 @@ public class unitpattern : MonoBehaviour
 
 
         bool complete = false;
+        dest.defered = false;
 
         switch (dest.type)
         {
             case paction.typelist.attackdown:
                 {
-                    if(!dest.started)
+                    if (dest.started)
                     {
-                        if(dest.i.Length < 2)
+                        if(dest.i == null)
                         {
                             complete = true;
                             break;
                         }
-                        dest.i = new int[] { dest.i[0], dest.i[1], 0 };
-                    }
-
-                    if(system.tilex(u.x) == dest.i[0] && system.tiley(u.y) == dest.i[1])
-                    {
-                        
-                        complete = true;
-                        break;
-                    }
-
-
-                    if(target != null)
-                    {
-                        if (system.isin(target.x, target.y, u.x - searchrange, u.y - searchrange, u.x + searchrange, u.y + searchrange))
+                        else if(dest.i.Length < 2)
                         {
-                            target = null;
-                        }
-
-                        dest.i[2] = 0;
-                    }
-
-                    if(target == null)
-                    {
-                        target = findenemy(searchrange);
-                        if(target == null)
-                        {
-                            if (++dest.i[2] > 2)
-                            {
-                                complete = true;
-                                break;
-                            }
-
-
-                            //암것도 안하고있으면 목적지 이동
-                            if (u.canaction && u.currentaction == null && u.pushedaction == null && u.actionlist.Count < 1)
-                            {
-                                u.addaction(unitaction.typelist.movedest, new int[] { dest.i[0], dest.i[1] }, null, null);
-                            }                            
-
-                            dest.defered = false;
-                            complete = false;                            
-
-                            Debug.Log("aldo");
+                            complete = true;
                             break;
                         }
                     }
 
-                    dest.defered = true;
-                    complete = true;
-                    //target이 있는 상태니까 그냥 unitproc으로넘겨줌
+                    if(target == null)
+                    {
+                        if (system.tilex(u.x) == dest.i[0] && system.tiley(u.y) == dest.i[1])
+                        {
+                            complete = true;
+                            break;
+                        }
+                        else
+                        {
+                            target = findenemy(searchrange);
+                            if (target != null)
+                            {
+                                u.clearaction();
+                                dest.defered = true;
+                                break;
+                            }
+                            else
+                            {
+                                u.addaction(unitaction.typelist.movedest, new int[] {dest.i[0],dest.i[1] }, null);
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        dest.defered = true;
+                    }
                 }
                 break;
 
@@ -563,6 +545,8 @@ public class unitpattern : MonoBehaviour
         {
             dest.started = true;
         }
+
+
         return complete;
     }
 

@@ -488,4 +488,17 @@ public class Unit : MonoBehaviour
         return canaction && currentaction == null && actionlist.Count < 1 && pushedaction == null;
     }
 
+
+    public void clearaction()
+    {
+        Destroy(currentaction);
+        Destroy(pushedaction);
+        foreach(unitaction action in actionlist)
+        {
+            Destroy(action);
+        }
+        actionlist.Clear();
+        currentaction = null;
+        pushedaction = null;
+    }
 }
