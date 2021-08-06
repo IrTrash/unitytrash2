@@ -141,7 +141,7 @@ MonoBehaviour:
   cooldown: 10
   destx: 0
   desty: 0
-  range: 2
+  range: 1
   priority: 1
   state: 1
   statetime: 0
@@ -189,6 +189,7 @@ MonoBehaviour:
   searchrange: 3
   wpindex: -1
   mycorruptor: {fileID: 0}
+  findingprisoner: {fileID: 0}
   myunits: []
   defenceunitlist: []
   attackunitlist: []

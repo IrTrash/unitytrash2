@@ -92,6 +92,7 @@ public class unitpattern : MonoBehaviour
     public float searchrange = 2; //1은 너무 짧다
     public int wpindex = -1; //이거 너무ㅡ 오래끌면 이 무기만 쓸려하지않을까? 고민
     public corruptor mycorruptor;
+    public prisoner findingprisoner;
     void unitproc() //20210510기준 이동 자체가 끝난 시점에서 처리를 하기 때문에 서로 가까워지려고 좌우로 움직이면 이동이 끝난 시점에 좌우가 뒤바뀌어서 다시 반복하게 됨. 수정이 필요할듯 <= 0512 : 대충랜덤
     {
         //어차피 자동적으로 action을 생성 후 추가하기 위한 거니까 행동불가거나 하고있는게 있으면 안 함.
@@ -119,65 +120,60 @@ public class unitpattern : MonoBehaviour
             target = findenemy(searchrange);
             if (target == null) //찾아도 없으면
             {
+                PrisonerCarrier pcr = gameObject.GetComponent<PrisonerCarrier>();
                 //carrior
-                if (mycorruptor != null)
+                if (mycorruptor != null && pcr != null)
                 {
-                    PrisonerCarrier pcr = gameObject.GetComponent<PrisonerCarrier>();
-                    if (pcr != null)
+                    if (pcr.currentprisoner != null)
                     {
-                        if (pcr.currentprisoner != null)
+                        if (!pcr.sendprisoner(mycorruptor))
                         {
-                            if (!pcr.sendprisoner(mycorruptor))
-                            {
-                                //위치가 안되는것인지 여부는 나중에 따지기로
-                                u.addaction(unitaction.typelist.movedest, new int[] { system.tilex(mycorruptor.transform.position.x), system.tiley(mycorruptor.transform.position.y) }, null);                                
-                            }
+                            //위치가 안되는것인지 여부는 나중에 따지기로
+                            u.addaction(unitaction.typelist.movedest, new int[] { system.tilex(mycorruptor.transform.position.x), system.tiley(mycorruptor.transform.position.y) }, null);
+                        }
 
+                    }
+                    else
+                    {
+                        if (pcr.pickprionserinrange())
+                        {
+                            Debug.Log("3311");
                         }
                         else
                         {
-                            if(pcr.pickprionserinrange())
+                            if(findingprisoner == null)
                             {
-                                Debug.Log("3311");
-                            }
-                            else
-                            {
-                                Debug.Log("finding prisoner");
                                 //find prisoner
                                 system sys = system.findsystem();
-                                Unit cu = mycorruptor.GetComponent<Unit>();
-                                unitpattern cup = mycorruptor.GetComponent<unitpattern>();
-                                if (sys != null && cup != null && cu != null)
+                                List<prisoner> candidates = sys.findprisoner(sys.left, sys.bottom, sys.right, sys.top, u.team);
+                                if(candidates.Count > 0)
                                 {
-                                    List<prisoner> candidates = sys.findprisoner(cu.tx - cup.searchrange, cu.ty - cup.searchrange, cu.tx + cup.searchrange, cu.ty + cup.searchrange, cu.team);
-                                    if (candidates.Count > 0)
-                                    {
-                                        prisoner dest = candidates[Random.Range(0, candidates.Count)];
-                                        u.addaction(unitaction.typelist.movedest, new int[] { system.tilex(dest.gameObject.transform.position.x), system.tiley(dest.gameObject.transform.position.y) }, null);
-                                    }
+                                    findingprisoner = candidates[UnityEngine.Random.Range(0, candidates.Count)];
                                 }
+                            }                            
+                            else
+                            {                                
+                                u.addaction(unitaction.typelist.approach, new int[] {system.tilex(findingprisoner.transform.position.x),system.tiley(findingprisoner.transform.position.y), 1 }, null);
                             }
-                            
                         }
-                    }
+                    }                       
                 }
-                else
+                else //그냥 유닛
                 {
                     //가만히 있게 아무것도 안썼는데 배회하게 하는게 나을수도?
-                }
+                }                
+            }
+            else //찾았는데 있으면
+            {
                 
             }
-
-        }    
-
-        
-        
-        if(target != null)
-        {
+        }
+        else  //타겟이 있을때
+        {         
             //타겟 유효성
             if (!system.isin(target.x,target.y,u.x - searchrange, u.y - searchrange, u.x + searchrange, u.y + searchrange) || u.team == target.team)
             {
-                target = null;                
+                target = null;
             }   
             else
             {
@@ -191,7 +187,7 @@ public class unitpattern : MonoBehaviour
                     }
                     else //접근 
                     {
-                        u.addaction(unitaction.typelist.approach, new int[] { target.ix, target.iy ,1 }, null );
+                        u.addaction(unitaction.typelist.approach, new int[] { target.tx, target.ty ,1 }, null );
                     }                                        
                 }
                 else

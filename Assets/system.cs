@@ -25,7 +25,7 @@ public class system : MonoBehaviour
         {
             return sysobj.GetComponent<system>();
         }
-
+        
         return null;
     }
 
@@ -333,6 +333,7 @@ public class system : MonoBehaviour
             }
         }
 
+        Debug.Log("findprisoner : " + r);
         return r;
     }
 

@@ -141,7 +141,7 @@ MonoBehaviour:
   cooldown: 10
   destx: 0
   desty: 0
-  range: 2
+  range: 1
   priority: 1
   state: 1
   statetime: 0
@@ -188,6 +188,8 @@ MonoBehaviour:
   target: {fileID: 0}
   searchrange: 3
   wpindex: -1
+  mycorruptor: {fileID: 0}
+  findingprisoner: {fileID: 0}
   myunits: []
   defenceunitlist: []
   attackunitlist: []
@@ -199,7 +201,6 @@ MonoBehaviour:
   crtr: {fileID: 0}
   carrierlist: []
   carriercount: 2
-  prisonertargetlist: []
 --- !u!114 &7934228199606741475
 MonoBehaviour:
   m_ObjectHideFlags: 0
